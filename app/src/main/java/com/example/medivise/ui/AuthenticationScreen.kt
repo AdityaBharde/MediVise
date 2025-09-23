@@ -18,9 +18,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.medivise.R
 import com.example.medivise.auth.SignInState
 
 @Composable
@@ -141,7 +141,7 @@ fun AuthenticationScreen(
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             ) {
                 Icon(
-                    painter = painterResource(id =),
+                    painter = painterResource(id = R.drawable.google_icon),
                     contentDescription = "Google sign-in",
                     modifier = Modifier.size(20.dp),
                     tint = Color.Unspecified
