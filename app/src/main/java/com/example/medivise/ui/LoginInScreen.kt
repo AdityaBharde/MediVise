@@ -1,4 +1,4 @@
-package com.example.medivise
+package com.example.medivise.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -141,7 +141,7 @@ fun AuthenticationScreen(
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.google_icon),
+                    painter = painterResource(id =),
                     contentDescription = "Google sign-in",
                     modifier = Modifier.size(20.dp),
                     tint = Color.Unspecified

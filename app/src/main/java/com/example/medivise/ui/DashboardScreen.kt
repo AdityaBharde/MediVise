@@ -1,4 +1,4 @@
-package com.example.medivise // Or com.example.medivise.ui.dashboard
+package com.example.medivise.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
