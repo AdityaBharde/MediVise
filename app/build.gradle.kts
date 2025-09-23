@@ -41,45 +41,38 @@ android {
 }
 
 dependencies {
-    implementation(libs.firebase.auth)
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.googleid)
-    implementation(libs.material3)
-    dependencies {
-        // Firebase
-        implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
-        implementation("com.google.firebase:firebase-auth")
-        implementation("com.google.android.gms:play-services-auth:21.2.0")
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
 
-        // AndroidX Core & Lifecycle
-        implementation(libs.androidx.core.ktx)
-        implementation(libs.androidx.lifecycle.runtime.ktx)
+    // AndroidX Core & Lifecycle
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
-        //coil
-        implementation("io.coil-kt:coil-compose:2.5.0")
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
-        // Jetpack Compose
-        implementation(platform(libs.androidx.compose.bom))
-        implementation(libs.androidx.activity.compose)
-        implementation(libs.androidx.ui)
-        implementation(libs.androidx.ui.graphics)
-        implementation(libs.androidx.ui.tooling.preview)
-        implementation(libs.androidx.material3)
-        implementation("androidx.compose.material:material-icons-core:1.7.0")
-        implementation("androidx.compose.material:material-icons-extended:1.7.0")
-        implementation(libs.androidx.navigation.compose)
-        implementation("androidx.compose.ui:ui-text-google-fonts:1.9.1")
+    // Jetpack Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation("androidx.compose.material:material-icons-core:1.7.0")
+    implementation("androidx.compose.material:material-icons-extended:1.7.0")
+    implementation(libs.androidx.navigation.compose)
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.8")
 
-        // Testing
-        testImplementation(libs.junit)
-        androidTestImplementation(libs.androidx.junit)
-        androidTestImplementation(libs.androidx.espresso.core)
-        androidTestImplementation(platform(libs.androidx.compose.bom))
-        androidTestImplementation(libs.androidx.ui.test.junit4)
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
 
-        // Debugging
-        debugImplementation(libs.androidx.ui.tooling)
-        debugImplementation(libs.androidx.ui.test.manifest)
-    }
+    // Debugging
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

@@ -26,7 +26,9 @@ import com.example.medivise.auth.SignInState
 @Composable
 fun AuthenticationScreen(
     state: SignInState,
-    onGoogleSignInClicked: () -> Unit
+    onGoogleSignInClicked: () -> Unit,
+    onSignUpClicked: () -> Unit,
+    onForgotPasswordClicked: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -38,7 +40,6 @@ fun AuthenticationScreen(
             Toast.makeText(context, error, Toast.LENGTH_LONG).show()
         }
     }
-
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -56,7 +57,7 @@ fun AuthenticationScreen(
             Text(
                 text = "MediVise",
                 style = MaterialTheme.typography.headlineLarge,
-                color = Color(red = 24, green = 181, blue = 50),
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 54.sp
             )
@@ -99,18 +100,17 @@ fun AuthenticationScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             TextButton(
-                onClick = { /* TODO: Implement Forgot Password */ },
+                onClick = onForgotPasswordClicked,
                 modifier = Modifier.align(Alignment.End),
             ) {
-                Text("Forgot Password?", color = Color(red = 24, green = 181, blue = 50))
+                Text("Forgot Password?", color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(24.dp))
-
 
             Button(
                 onClick = { /* TODO: Implement Email/Password Login */ },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(Color(red = 24, green = 181, blue = 50))
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
             ) {
                 Text("Login")
             }
@@ -135,9 +135,6 @@ fun AuthenticationScreen(
             OutlinedButton(
                 onClick = onGoogleSignInClicked,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.primary
-                ),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             ) {
                 Icon(
@@ -147,7 +144,7 @@ fun AuthenticationScreen(
                     tint = Color.Unspecified
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Sign in with Google", color = Color.Black)
+                Text("Sign in with Google", color = MaterialTheme.colorScheme.onSurface)
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -158,12 +155,11 @@ fun AuthenticationScreen(
             ) {
                 Text("Don't have an account?")
                 TextButton(
-                    onClick = { /* TODO: Navigate to Sign Up */ }
+                    onClick = onSignUpClicked
                 ) {
-                    Text("Sign Up", color = Color(red = 24, green = 181, blue = 50))
+                    Text("Sign Up", color = MaterialTheme.colorScheme.primary)
                 }
             }
         }
     }
 }
-

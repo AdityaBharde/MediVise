@@ -9,8 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,9 +20,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.medivise.auth.GoogleAuthUiClient
 import com.example.medivise.auth.SignInViewModel
 import com.example.medivise.ui.AuthenticationScreen
+import com.example.medivise.ui.DashboardScreenWithSidebar
+import com.example.medivise.ui.SignUpScreen
 import kotlinx.coroutines.launch
-import androidx.navigation.compose.composable
-
 
 @Composable
 fun ForgotPasswordScreen(navController: NavHostController) { Text("Forgot Password Screen UI") }
@@ -44,7 +45,6 @@ fun ChatBotScreen() { Text("Chat Bot Screen UI") }
 @Composable
 fun LanguageSettingsScreen() { Text("Language Settings Screen UI") }
 
-
 object AppRoutes {
     const val LOGIN = "login"
     const val SIGN_UP = "signup"
@@ -61,16 +61,20 @@ object AppRoutes {
 
 @Composable
 fun AppNavigation(googleAuthUiClient: GoogleAuthUiClient) {
-
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "sign_in") {
-        composable("sign_in") {
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    NavHost(navController = navController, startDestination = AppRoutes.LOGIN) {
+        composable(AppRoutes.LOGIN) {
             val viewModel = viewModel<SignInViewModel>()
             val state by viewModel.state.collectAsStateWithLifecycle()
 
             LaunchedEffect(key1 = Unit) {
-                if(googleAuthUiClient.getSignedInUser() != null) {
-                    navController.navigate("profile")
+                if (googleAuthUiClient.getSignedInUser() != null) {
+                    navController.navigate(AppRoutes.DASHBOARD) {
+                        popUpTo(AppRoutes.LOGIN) { inclusive = true }
+                    }
                 }
             }
 
@@ -78,7 +82,7 @@ fun AppNavigation(googleAuthUiClient: GoogleAuthUiClient) {
                 contract = ActivityResultContracts.StartIntentSenderForResult(),
                 onResult = { result ->
                     if (result.resultCode == RESULT_OK) {
-                        lifecycleScope.launch {
+                        coroutineScope.launch {
                             val signInResult = googleAuthUiClient.signInWithIntent(
                                 intent = result.data ?: return@launch
                             )
@@ -90,13 +94,10 @@ fun AppNavigation(googleAuthUiClient: GoogleAuthUiClient) {
 
             LaunchedEffect(key1 = state.isSignInSuccessful) {
                 if (state.isSignInSuccessful) {
-                    Toast.makeText(
-                        applicationContext,
-                        "Sign in successful",
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                    navController.navigate("profile")
+                    Toast.makeText(context, "Sign in successful", Toast.LENGTH_LONG).show()
+                    navController.navigate(AppRoutes.DASHBOARD) {
+                        popUpTo(AppRoutes.LOGIN) { inclusive = true }
+                    }
                     viewModel.resetState()
                 }
             }
@@ -104,7 +105,7 @@ fun AppNavigation(googleAuthUiClient: GoogleAuthUiClient) {
             AuthenticationScreen(
                 state = state,
                 onGoogleSignInClicked = {
-                    lifecycleScope.launch {
+                    coroutineScope.launch {
                         val signInIntentSender = googleAuthUiClient.signIn()
                         launcher.launch(
                             IntentSenderRequest.Builder(
@@ -112,29 +113,48 @@ fun AppNavigation(googleAuthUiClient: GoogleAuthUiClient) {
                             ).build()
                         )
                     }
-                }
+                },
+                onSignUpClicked = { navController.navigate(AppRoutes.SIGN_UP) },
+                onForgotPasswordClicked = { navController.navigate(AppRoutes.FORGOT_PASSWORD) }
             )
         }
-        composable("profile") {
-            ProfileScreen(
-                userData = googleAuthUiClient.getSignedInUser(),
-                onSignOut = {
-                    lifecycleScope.launch {
-                        googleAuthUiClient.signOut()
-                        Toast.makeText(
-                            applicationContext,
-                            "Signed out",
-                            Toast.LENGTH_LONG
-                        ).show()
 
-                        navController.popBackStack()
+        composable(AppRoutes.DASHBOARD) {
+            DashboardScreenWithSidebar(
+                onNavigateToMentalHealth = { navController.navigate(AppRoutes.MENTAL_HEALTH) },
+                onNavigateToReportAnalyzer = { navController.navigate(AppRoutes.REPORT_ANALYZER) },
+                onNavigateToChatBot = { navController.navigate(AppRoutes.CHATBOT) },
+                onNavigateToMultilingualSettings = { navController.navigate(AppRoutes.LANGUAGE_SETTINGS) },
+                onDrawerItemClick = { route -> navController.navigate(route) },
+                onLogoutClick = {
+                    coroutineScope.launch {
+                        googleAuthUiClient.signOut()
+                        Toast.makeText(context, "Signed out", Toast.LENGTH_LONG).show()
+                        navController.navigate(AppRoutes.LOGIN) {
+                            popUpTo(AppRoutes.DASHBOARD) { inclusive = true }
+                        }
                     }
                 }
             )
         }
-    }
 
-        composable(AppRoutes.PROFILE) { ProfileScreen(userData = null, onSignOut = {}) }
+        composable(AppRoutes.PROFILE) {
+            ProfileScreen(
+                userData = googleAuthUiClient.getSignedInUser(),
+                onSignOut = {
+                    coroutineScope.launch {
+                        googleAuthUiClient.signOut()
+                        Toast.makeText(context, "Signed out", Toast.LENGTH_LONG).show()
+                        navController.navigate(AppRoutes.LOGIN) {
+                            popUpTo(AppRoutes.DASHBOARD) { inclusive = true }
+                        }
+                    }
+                }
+            )
+        }
+
+        composable(AppRoutes.SIGN_UP) { SignUpScreen(navController) }
+        composable(AppRoutes.FORGOT_PASSWORD) { ForgotPasswordScreen(navController) }
         composable(AppRoutes.REPORTS) { ReportsScreen() }
         composable(AppRoutes.SETTINGS) { SettingsScreen() }
         composable(AppRoutes.MENTAL_HEALTH) { MentalHealthScreen() }
