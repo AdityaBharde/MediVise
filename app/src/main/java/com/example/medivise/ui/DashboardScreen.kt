@@ -1,9 +1,11 @@
 package com.example.medivise.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat // Icon for ChatBot & Report Analyzer
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -14,14 +16,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.medivise.ui.theme.MediviseTheme
+import coil.compose.AsyncImage
+import com.example.medivise.AppRoutes
+import com.example.medivise.auth.UserData
+import com.example.medivise.ui.theme.MediViseTheme
 import kotlinx.coroutines.launch
-
-// Data class for Feature Card items
 data class FeatureCardItem(
     val title: String,
     val icon: ImageVector,
@@ -29,7 +36,6 @@ data class FeatureCardItem(
     val onClick: () -> Unit
 )
 
-// Data class for Navigation Drawer items
 data class NavDrawerItem(
     val label: String,
     val icon: ImageVector,
@@ -41,12 +47,11 @@ data class NavDrawerItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreenWithSidebar(
-    // Callbacks for feature card navigation
+    userData: UserData?,
     onNavigateToMentalHealth: () -> Unit,
     onNavigateToReportAnalyzer: () -> Unit,
-    onNavigateToChatBot: () -> Unit, // << CHANGED from onNavigateToVitalsTracker
+    onNavigateToChatBot: () -> Unit,
     onNavigateToMultilingualSettings: () -> Unit,
-    // Callbacks for drawer item navigation
     onDrawerItemClick: (String) -> Unit,
     onLogoutClick: () -> Unit
 ) {
@@ -55,20 +60,16 @@ fun DashboardScreenWithSidebar(
 
 
     val navDrawerItems = listOf(
-        NavDrawerItem("Home", Icons.Filled.Home, "Home Screen", "dashboard") { // Assuming "dashboard" is the route for home
-            onDrawerItemClick("dashboard") // Use actual route from AppRoutes
+        NavDrawerItem("Home", Icons.Filled.Home, "Home Screen", "dashboard") {
+            onDrawerItemClick(AppRoutes.DASHBOARD)
             scope.launch { drawerState.close() }
         },
-        NavDrawerItem("Profile", Icons.Filled.AccountCircle, "User Profile", "profile") { // Use AppRoutes.PROFILE
-            onDrawerItemClick("profile") // Use actual route from AppRoutes
+        NavDrawerItem("Reports", Icons.AutoMirrored.Filled.ListAlt, "View Reports", "reports") {
+            onDrawerItemClick(AppRoutes.REPORTS)
             scope.launch { drawerState.close() }
         },
-        NavDrawerItem("Reports", Icons.AutoMirrored.Filled.ListAlt, "View Reports", "reports") { // Use AppRoutes.REPORTS
-            onDrawerItemClick("reports") // Use actual route from AppRoutes
-            scope.launch { drawerState.close() }
-        },
-        NavDrawerItem("Settings", Icons.Filled.Settings, "App Settings", "settings") { // Use AppRoutes.SETTINGS
-            onDrawerItemClick("settings") // Use actual route from AppRoutes
+        NavDrawerItem("Settings", Icons.Filled.Settings, "App Settings", "settings") {
+            onDrawerItemClick(AppRoutes.SETTINGS)
             scope.launch { drawerState.close() }
         }
     )
@@ -77,19 +78,44 @@ fun DashboardScreenWithSidebar(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(modifier = Modifier.width(300.dp)) {
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    "MediVise",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                    Spacer(Modifier.height(12.dp))
+
+                    if(userData?.profilePictureUrl != null){
+                        AsyncImage(
+                            model = userData.profilePictureUrl,
+                            contentDescription = "Profile Picture",
+                            modifier = Modifier.size(100.dp).clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                    else{
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Profile Picture",
+                            modifier = Modifier.size(100.dp)
+                        )
+                    }
+                    Spacer(Modifier.height(10.dp))
+
+                    userData?.username?.let {
+                        Text(
+                            text = it
+                        )
+                    }
+                }
+
                 Divider(modifier = Modifier.padding(vertical = 8.dp))
 
                 navDrawerItems.forEach { item ->
                     NavigationDrawerItem(
                         icon = { Icon(item.icon, contentDescription = item.contentDescription) },
                         label = { Text(item.label) },
-                        selected = false, // You'll need to manage selected state based on current route
+                        selected = false,
                         onClick = item.onClick,
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
@@ -133,7 +159,7 @@ fun DashboardScreenWithSidebar(
                 modifier = Modifier.padding(paddingValues),
                 onNavigateToMentalHealth = onNavigateToMentalHealth,
                 onNavigateToReportAnalyzer = onNavigateToReportAnalyzer,
-                onNavigateToChatBot = onNavigateToChatBot, // << CHANGED
+                onNavigateToChatBot = onNavigateToChatBot,
                 onNavigateToMultilingualSettings = onNavigateToMultilingualSettings
             )
         }
@@ -145,13 +171,13 @@ fun DashboardContent(
     modifier: Modifier = Modifier,
     onNavigateToMentalHealth: () -> Unit,
     onNavigateToReportAnalyzer: () -> Unit,
-    onNavigateToChatBot: () -> Unit, // << CHANGED
+    onNavigateToChatBot: () -> Unit,
     onNavigateToMultilingualSettings: () -> Unit
 ) {
     val featureCards = listOf(
         FeatureCardItem("Mental Health Check", Icons.Filled.Psychology, "Mental Health Check-up", onNavigateToMentalHealth),
         FeatureCardItem("Report Analyzer", Icons.AutoMirrored.Filled.Chat, "Analyze Reports", onNavigateToReportAnalyzer),
-        FeatureCardItem("Chat Bot", Icons.Filled.SmartToy, "Chat with AI Bot", onNavigateToChatBot), // << CHANGED & new Icon
+        FeatureCardItem("Chat Bot", Icons.Filled.SmartToy, "Chat with AI Bot", onNavigateToChatBot),
         FeatureCardItem("Multilingual Support", Icons.Filled.Language, "Change Language", onNavigateToMultilingualSettings)
     )
 
@@ -191,8 +217,6 @@ fun DashboardContent(
     }
 }
 
-// HealthSummarySection, SummaryItem, FeatureCard composables remain the same...
-// (Make sure they are present in your actual file)
 @Composable
 fun HealthSummarySection(mood: String, activityLevel: String, lastCheckup: String) {
     Card(
@@ -288,17 +312,3 @@ fun FeatureCard(
 }
 
 
-@Preview(showBackground = true, name = "Dashboard Screen with Sidebar - Light")
-@Composable
-fun DashboardScreenWithSidebarPreviewLight() {
-    MediviseTheme(darkTheme = false) {
-        DashboardScreenWithSidebar(
-            onNavigateToMentalHealth = {},
-            onNavigateToReportAnalyzer = {},
-            onNavigateToChatBot = {}, // << CHANGED
-            onNavigateToMultilingualSettings = {},
-            onDrawerItemClick = {},
-            onLogoutClick = {}
-        )
-    }
-}

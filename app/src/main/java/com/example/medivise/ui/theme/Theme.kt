@@ -34,7 +34,7 @@ private val DarkAppColorScheme = darkColorScheme(
 )
 
 @Composable
-fun MediviseTheme(
+fun MediViseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

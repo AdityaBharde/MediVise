@@ -3,6 +3,7 @@ package com.example.medivise.ui
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -52,7 +53,7 @@ fun AuthenticationScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(130.dp))
+            Spacer(modifier = Modifier.height(90.dp))
 
             Text(
                 text = "MediVise",
@@ -61,7 +62,7 @@ fun AuthenticationScreen(
                 fontWeight = FontWeight.Bold,
                 fontSize = 54.sp
             )
-            Spacer(modifier = Modifier.height(110.dp))
+            Spacer(modifier = Modifier.height(80.dp))
             Text(
                 text = "Welcome! Sign in to continue.",
                 style = MaterialTheme.typography.titleMedium,
@@ -151,6 +152,7 @@ fun AuthenticationScreen(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(bottom = 16.dp)
             ) {
                 Text("Don't have an account?")
