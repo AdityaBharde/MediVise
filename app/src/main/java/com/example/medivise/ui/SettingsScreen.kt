@@ -19,10 +19,6 @@ fun ReportAnalyzerScreen() {
     Text("Report Analyzer Screen UI")
 }
 
-@Composable
-fun ChatBotScreen() {
-    Text("Chat Bot Screen UI")
-}
 
 @Composable
 fun LanguageSettingsScreen() {
