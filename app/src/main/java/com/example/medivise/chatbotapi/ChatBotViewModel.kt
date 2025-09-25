@@ -37,9 +37,8 @@ class ChatBotViewModel(application: Application) : AndroidViewModel(application)
 
             val prompt = """
                 You are a caring, supportive mental health assistant for an app called MediVise.
-                A user has expressed the following feeling or situation: "$userInput".
-                Provide a short (2-3 sentences), empathetic, and encouraging response.
-                Do not give medical advice. If the user's input seems serious, gently suggest they talk to a professional.
+                Based on this "$userInput" interact with the user and provide solution.
+                Try to solve the problem be empathetic , nice. 
             """.trimIndent()
 
             val botResponseText = GeminiApiService.getGenerativeResponse(prompt)

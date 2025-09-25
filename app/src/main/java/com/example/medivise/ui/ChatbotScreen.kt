@@ -32,7 +32,8 @@ fun ChatBotScreen() {
             .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // Chat history
+
+        Spacer(Modifier.height(50.dp))
         LazyColumn(
             modifier = Modifier.weight(1f),
             reverseLayout = true
@@ -80,6 +81,7 @@ fun ChatBubble(message: ChatMessage) {
     val isUserMessage = message.sender == "user"
     val bubbleColor = if (isUserMessage) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
     val horizontalAlignment = if (isUserMessage) Alignment.End else Alignment.Start
+
 
     Box(
         modifier = Modifier
